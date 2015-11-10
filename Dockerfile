@@ -2,6 +2,10 @@
 
 FROM python:3
 
-ADD docker.py /docker.py
+ADD . /opt/docker-tools/
 
-CMD ["python", "/docker.py"]
+RUN pip3 install pytest
+
+WORKDIR /opt/docker-tools/
+
+CMD ["py.test", "."]

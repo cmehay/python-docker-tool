@@ -1,0 +1,36 @@
+tool:
+    image: python:3
+    command: python /tool/docker_links.py
+    volumes:
+        - "./:/tool:ro"
+    links:
+        - test1
+        - test2
+        - test3
+        - test4
+
+test1:
+    image: busybox
+    command: sleep 600
+    expose:
+        - 800
+        - 8001
+    environment:
+        FOO: bar
+
+test2:
+    image: busybox
+    command: sleep 600
+    expose:
+        - 800
+        - 8001
+
+test3:
+    image: busybox
+    command: sleep 600
+    environment:
+        FOO: bar
+
+test4:
+    image: busybox
+    command: sleep 600
