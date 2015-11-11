@@ -17,6 +17,7 @@ class DockerLinks(object):
 
     def __init__(self):
         self._get_links()
+        self._set_shortest_name()
 
     def __enter__(self):
         return self
@@ -67,9 +68,20 @@ class DockerLinks(object):
             if self.all_links[name]["ip"] == ip:
                 lst = self.all_links[name]["other_names"]
                 self.all_links[name]["other_names"] = list(set(lst + names))
-                self.all_links[name]["other_names"].sort()
                 if name in self.all_links[name]["other_names"]:
                     self.all_links[name]["other_names"].remove(name)
+
+    def _set_shortest_name(self):
+        for name, item in self.all_links.items():
+            if not len(item["other_names"]):
+                continue
+            for idx, other in enumerate(item["other_names"]):
+                if len(other) < len(name) and not _is_uid(other):
+                    item["other_names"].pop(idx)
+                    item["other_names"].append(name)
+                    self.all_links[other] = self.all_links.pop(name)
+                    name = other
+            item["other_names"].sort()
 
     def links(self, *args):
         nb_args = len(args)
@@ -80,11 +92,12 @@ class DockerLinks(object):
                 len(set(item["other_names"]).intersection(args))}
 
     def to_json(self, *args):
-        print(json.dumps(self.links(*args),
-                         sort_keys=True,
-                         indent=4,
-                         separators=(',', ': ')
-                         ))
+        return (json.dumps(self.links(*args),
+                           sort_keys=True,
+                           indent=4,
+                           separators=(',', ': '),
+                           )
+                )
 
 
 def _find_ports(link_name):
@@ -107,6 +120,17 @@ def _find_env(link_name):
         if m:
             rtn[m.group(1)] = value
     return rtn
+
+
+def _is_uid(link_name):
+    """ Check is the name is a docker uid """
+    if len(link_name) is not 12:
+        return False
+    try:
+        int(link_name, 16)
+    except:
+        return False
+    return True
 
 
 if __name__ == '__main__':

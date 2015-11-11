@@ -1,36 +1,44 @@
-tool:
-    image: python:3
-    command: python /tool/docker_links.py
-    volumes:
-        - "./:/tool:ro"
+testpython3:
+    build: .
+    dockerfile: Dockerfile.py3
     links:
         - test1
-        - test2
-        - test3
+        - 132c2710a189
+        - test3withlotofcharacters
+        - test4
+
+testpython2:
+    build: .
+    dockerfile: Dockerfile.py2
+    links:
+        - test1
+        - 132c2710a189
+        - test3withlotofcharacters
         - test4
 
 test1:
     image: busybox
-    command: sleep 600
+    command: sleep 30
     expose:
         - 800
         - 8001
     environment:
         FOO: bar
 
-test2:
+# this is an uid compatible string
+132c2710a189:
     image: busybox
-    command: sleep 600
+    command: sleep 30
     expose:
         - 800
         - 8001
 
-test3:
+test3withlotofcharacters:
     image: busybox
-    command: sleep 600
+    command: sleep 30
     environment:
         FOO: bar
 
 test4:
     image: busybox
-    command: sleep 600
+    command: sleep 30

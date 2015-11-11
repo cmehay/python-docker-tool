@@ -1,10 +1,10 @@
-# Docker demo, this doesn't have any purpose but for testing
+# Testing with python 3
 
 FROM python:3
 
-ADD . /opt/docker-tools/
-
 RUN pip3 install pytest
+
+ADD . /opt/docker-tools/
 
 WORKDIR /opt/docker-tools/
 
